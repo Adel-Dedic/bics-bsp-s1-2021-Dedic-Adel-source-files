@@ -11,7 +11,7 @@ def rotate_character(c, start, end):
         c_num = ord(c)
         c_num -= ord(start)
         c_num += rotor1
-        c_num += rotor2
+        c_num -= rotor2*2
         c_num %=window_width
         c_num += ord(start)
         c = chr(c_num)
@@ -52,5 +52,3 @@ else:
     print("Your encrypted messages states as follows:",encrypt(s))
 
 os.system('pause')
-
-
