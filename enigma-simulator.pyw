@@ -109,7 +109,7 @@ def rotor_change():
             enigma.rotor3+=1
         else:
             enigma.rotor3=1
-    else:
+    if enigma.rotor1<0:
         if enigma.rotor1>-26:
             enigma.rotor1-=1
         elif enigma.rotor2>-26:
@@ -121,6 +121,8 @@ def rotor_change():
             enigma.rotor3-=1
         else:
             enigma.rotor3=-1
+    else:
+        return
     
 
 def encrypt(s):
