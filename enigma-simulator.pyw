@@ -74,13 +74,12 @@ button_decrypt.grid(row=6, column=2, columnspan=2, padx=10, pady=15)
 
 
 class Enigma():
-    def __init__(self,rotor1,rotor2,rotor3,encryption):
+    def __init__(self,rotor1,rotor2,rotor3):
         self.rotor1=rotor1
         self.rotor2=rotor2
         self.rotor3=rotor3
-        self.encryption=encryption
 
-enigma=Enigma(0,0,0,True)
+enigma=Enigma(0,0,0)
 
 def rotate_character(c, start, end):
     if c>=start and c<=end:
@@ -89,7 +88,7 @@ def rotate_character(c, start, end):
         c_num -= ord(start)
         c_num += enigma.rotor1
         c_num -= enigma.rotor2
-        c_num += enigma.rotor3
+        c_num += enigma.rotor3*2
         c_num %=window_width
         c_num += ord(start)
         c = chr(c_num)
@@ -97,31 +96,31 @@ def rotate_character(c, start, end):
     else:
         return c
 
-def rotor_changeEncryption():
-    if enigma.rotor1<26:
-        enigma.rotor1+=1
-    elif enigma.rotor2<26:
-        enigma.rotor1=1
-        enigma.rotor2+=1
-    elif enigma.rotor3<26:
-        enigma.rotor1=1
-        enigma.rotor2=1
-        enigma.rotor3+=1
+def rotor_change():
+    if enigma.rotor1>0:
+        if enigma.rotor1<26:
+            enigma.rotor1+=1
+        elif enigma.rotor2<26:
+            enigma.rotor1=1
+            enigma.rotor2+=1
+        elif enigma.rotor3<26:
+            enigma.rotor1=1
+            enigma.rotor2=1
+            enigma.rotor3+=1
+        else:
+            enigma.rotor3=1
     else:
-        enigma.rotor3=1
-
-def rotor_changeDecryption():
-    if enigma.rotor1>-26:
-        enigma.rotor1-=1
-    elif enigma.rotor2>-26:
-        enigma.rotor1=-1
-        enigma.rotor2-=1
-    elif enigma.rotor3>-26:
-        enigma.rotor1=-1
-        enigma.rotor2=-1
-        enigma.rotor3-=1
-    else:
-        enigma.rotor3=-1
+        if enigma.rotor1>-26:
+            enigma.rotor1-=1
+        elif enigma.rotor2>-26:
+            enigma.rotor1=-1
+            enigma.rotor2-=1
+        elif enigma.rotor3>-26:
+            enigma.rotor1=-1
+            enigma.rotor2=-1
+            enigma.rotor3-=1
+        else:
+            enigma.rotor3=-1
     
 
 def encrypt(s):
@@ -131,19 +130,14 @@ def encrypt(s):
         c = rotate_character(c, 'a', 'z')
         c = rotate_character(c, '0', '9')
         result +=c
-        if enigma.encryption:
-            rotor_changeEncryption()
-        else:
-            rotor_changeDecryption()
+        rotor_change()
             
     return result
 
 def decrypt(s):
-    global encryption
     enigma.rotor1=-enigma.rotor1
     enigma.rotor2=-enigma.rotor2
     enigma.rotor3=-enigma.rotor3
-    enigma.encryption=False
     return encrypt(s)
 
 root.mainloop()
