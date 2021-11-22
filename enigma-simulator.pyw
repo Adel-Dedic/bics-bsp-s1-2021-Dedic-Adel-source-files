@@ -10,7 +10,8 @@ root.configure(background='#DCC489')
 
 # 'Set' button is required to initialise the 3 different rotors to specific values
 def button_set():
-    
+
+    # Conditions: The values must be between 1 and 26.
     # If the conditions hold, the rotors will be passed as the rotor settings and encryption/decryption will get allowed
     if (r1.get()!='' and r2.get()!='' and r3.get()!='') and (int(r1.get())>0 and int(r1.get())<27 and
          int(r2.get())>0 and int(r2.get())<27 and
@@ -30,6 +31,26 @@ def button_set():
         rotor_label['text']="Please make sure that the values are between 1 and 26."
         button_decrypt['state']=DISABLED
         button_encrypt['state']=DISABLED
+
+# For testing purposes, a button is given that will simply transfer from the output to input and let the user test the processed text
+def button_transfer():
+    # Output Text -> Input Text
+    # Output Text is deleted during the process
+    str_input.delete("1.0", END)
+    str_input.insert("1.0", str_output.get("1.0", END))
+    str_output.delete("1.0", END)
+
+    # The rotors are set again to not cause any issues whilst enciphering/deciphering
+    enigma.rotor1=int(r1.get())
+    enigma.rotor2=int(r2.get())
+    enigma.rotor3=int(r3.get())
+    enigma.rotors=[enigma.rotor1,enigma.rotor2,enigma.rotor3]
+
+    #Buttons are renabled for testing purposes and the transfer button is disabled to not overwrite anything if reclicked without wanting to
+    button_encrypt['state']=NORMAL
+    button_decrypt['state']=NORMAL
+    button_transfer['state']=DISABLED
+
         
 # Purpose of this button is to encrypt() the input message and outputs at the end; the buttons get disabled
 # And the user is asked to set rotors again to proceed encrypting/decrypting another message
@@ -40,6 +61,7 @@ def button_encrypt():
     button_encrypt['state']=DISABLED
     button_decrypt['state']=DISABLED
     button_export['state']=NORMAL
+    button_transfer['state']=NORMAL
     rotor_label['text']="Set the rotors again to continue. ("+str(enigma.rotor1)+"/"+str(enigma.rotor2)+"/"+str(enigma.rotor3)+")"
 
 # Purpose of this button is decrypt a given message through the set rotors with decrypt()
@@ -50,6 +72,7 @@ def button_decrypt():
     str_output.insert("1.0", decrypt(s))
     button_decrypt['state']=DISABLED
     button_encrypt['state']=DISABLED
+    button_transfer['state']=NORMAL
 
 # To help the process of copying/pasting and remembering the rotor settings, the program is equipped with functionalities to import & export 'keys'
 # These function will take the information contained in the 'key.txt' file and proceed them into correct boxes
@@ -70,6 +93,7 @@ def button_import():
     # Allows the user to proceed decrypting the message    
     str_output.delete("1.0", END)
     button_decrypt['state']=NORMAL
+    button_transfer['state']=DISABLED
     rotor_label['text']="The rotors are set my friend. ("+str(enigma.rotor1)+"/"+str(enigma.rotor2)+"/"+str(enigma.rotor3)+")"
 
 # Simply exports a text file named 'key.txt' where information is saved concerning the rotor settings and the encrypted message
@@ -104,16 +128,19 @@ input_label= Label(root, text="Insert your message: ", bg='#DCC489')
 input_label.place(x=10,y=52)
 
 output_label= Label(root, text="The result: ", bg='#DCC489')
-output_label.place(x=10,y=245)
+output_label.place(x=10,y=280)
 
 # The last label is a notice explaining purpose of the 'Import/Export' button have
 notice_label = Label(root, text="*These buttons will create and read only a text file named 'key.txt'", bg='#DCC489', font=('Arial',7))
-notice_label.place(x=30,y=559)
+notice_label.place(x=30,y=595)
 
 button_set = Button(root, text="Set", padx=10, pady=0, command=button_set, bg='#B88933')
 button_set.grid(row=1,column=3)
 
 # The rest are buttons created for respectul porpuse as indicated with their names and this way they get included into the interface
+button_transfer = Button(root, text="↑ (Transfer)", padx=80, pady=5, command=button_transfer,bg='#B88933', state=DISABLED)
+button_transfer.grid(row=4, column=0, columnspan=4)
+
 button_encrypt = Button(root, text="Encrypt", padx=63, pady=10, command=button_encrypt,bg='#B88933', state=DISABLED)
 button_encrypt.grid(row=6, column=0, columnspan=2)
 
